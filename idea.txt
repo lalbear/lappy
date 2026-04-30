@@ -1,0 +1,160 @@
+# Lenz — Full Project Prompt
+
+## What I Am Building
+
+I am building a desktop app called **Lenz** for macOS and Windows. It is an AI-powered screen annotation tool that lives as a floating, always-on-top overlay on the user's desktop. The app lets users draw a freehand lasso selection around anything visible on their screen — a chart, a word, a UI element, a block of code, an image, anything — and instantly get an AI-generated explanation of what it is, either read aloud in voice or shown in a sidebar panel. Users can also type follow-up questions in that same sidebar to dig deeper. The app is designed to feel like a smart, invisible assistant that is always ready on screen, never in the way.
+
+---
+
+## The Core User Flow
+
+1. The app launches and a small floating pill-shaped island appears at the top of the screen (like Apple's Dynamic Island on iPhone).
+2. The island sits silently and stays on top of every other window at all times.
+3. The user holds down the mouse button on the island for roughly 300 milliseconds — it springs open into a wider expanded state, revealing four control buttons.
+4. The user clicks the Lasso button.
+5. The island shrinks back to a compact state and shows a pulsing green dot with the text "Drawing…" to let the user know lasso mode is active.
+6. The screen dims slightly with a dark overlay. The user holds the mouse button and draws a freehand loop around anything on screen — a diagram, a paragraph of text, a chart, a UI button, anything.
+7. As the user draws, a glowing mint-green line traces their path in real time with a subtle glow effect.
+8. When the user releases the mouse, the loop closes and fills with a transparent green tint. A confirm button labelled "Analyze selection" appears near the center of the selection.
+9. The user clicks Analyze. The island transitions to an "Analyzing…" state showing a spinner.
+10. After 1–2 seconds the sidebar slides in from the right side of the screen, showing the AI's explanation in a typewriter-style character-by-character animation.
+11. Quick-tap chips appear below the explanation (More detail, How it works, Summarize, Check issues) and the user can also type their own follow-up question in the input box at the bottom of the sidebar.
+12. The user can also hit Scan instead of Lasso to have the AI analyze the entire visible screen at once.
+
+---
+
+## The Island UI — Design Spec
+
+### Visual Style
+
+The design is inspired directly by Apple's Dynamic Island on the iPhone 16 and above. The island is a pure black pill shape that lives at the top of the screen. It has no title bar, no window chrome, no shadow decoration — just a clean black pill that morphs between states with spring physics animations. The aesthetic is minimalistic, modern, premium, and dark. The only accent color in the entire app is a single mint green (#00d296) used for: the active lasso trail glow, the pulsing status dot, the confirm button, the spinner glow, hover/active states on controls, and the send button in the sidebar.
+
+### States the Island Morphs Between
+
+**Idle state** — compact pill, 132px wide × 44px tall. Shows a small modern paintbrush SVG icon on the left and the app name "Lenz" in white next to it. The dot of the paintbrush icon is filled mint green. No other decoration.
+
+**Expanded state** — triggered by holding the island for ~300ms. The pill springs open to 344px wide × 84px tall with a slightly more rounded border-radius. The spring animation has a slight overshoot (cubic-bezier with bounce) so it feels physical and alive, identical to how the iPhone Dynamic Island expands. Inside are four icon-based control buttons laid out horizontally with thin dividers between them.
+
+The four controls are:
+- **Lasso** — freehand draw selection tool, activates lasso mode on click
+- **Scan** — analyzes the full screen instantly
+- **Voice** — toggles voice audio output on/off, glows mint green when on
+- **Model** — opens AI model/provider settings
+
+Each button is 72px wide, has an SVG icon at the top and a short label below (11px, muted). On hover it gets a subtle white background tint. When active/toggled on, it glows with a mint green background tint and the icon strokes turn mint green.
+
+**Drawing state** — island is 150px wide × 44px, shows a pulsing mint green dot + the text "Drawing…"
+
+**Analyzing state** — island is 170px wide × 44px, shows a spinning circular loader in mint green + the text "Analyzing…"
+
+### Island Positioning
+
+The island can be repositioned using a toggle at the bottom of the screen with three options: Left corner, Center (default), Right corner. Clicking a position option moves the island with a spring animation. At left and right it anchors to that corner. At center it uses 50% + translateX(-50%).
+
+### Animation Spec
+
+All island transitions use `cubic-bezier(0.34, 1.5, 0.64, 1)` for width and height — this produces the signature spring overshoot feel of Dynamic Island. Border-radius transitions use `cubic-bezier(0.34, 1.2, 0.64, 1)`. Duration is ~480ms. The expanded face fades in with a slight delay (0.1s) after the island has grown, so content appears after the shape has settled. The idle face scales down and fades out simultaneously.
+
+---
+
+## The Lasso Selection — Design Spec
+
+When lasso mode is active the entire screen gets a dark overlay at 42% opacity. The user draws freehand. The path renders in real time as a continuous glowing mint green line (2.2px stroke, glow shadow of 14px blur in mint green, round linecap and linejoin). The start point is marked with a solid filled mint green circle (4.5px radius with a soft glow). When the user releases the mouse the path closes, fills with rgba(0,210,150,0.07) — a very subtle green wash — and the Analyze button appears. The cursor during drawing is a crosshair. Pressing Escape cancels lasso mode and resets everything.
+
+---
+
+## The Sidebar — Design Spec
+
+The sidebar is 340px wide, slides in from the right edge of the screen. It uses a frosted glass effect (backdrop-filter: blur(48px) saturate(180%)) over a near-black background (rgba(10,10,18,0.92)) with a 0.5px left border in a very subtle white. It slides in using `cubic-bezier(0.16, 1, 0.3, 1)` over 500ms — a fast deceleration feel.
+
+Inside the sidebar from top to bottom:
+- A small header row with the label "AI RESULT" in tiny uppercase muted letters, and an X close button (circular, subtle)
+- A preview thumbnail area (110px tall rounded card) showing a badge that says "Captured" in mint green
+- The main response area — a scrollable card with the AI's explanation rendered character by character in a typewriter animation (14ms per character)
+- Quick-tap suggestion chips below the text (More detail, How it works, Summarize, Check issues) — these are pill-shaped, muted, and glow mint green on hover
+- At the bottom, a full-width text input with a circular mint green send button
+
+The sidebar closes when the user clicks the X button. Clicking the chips sends that text as a follow-up question. The user can also type freely and hit Enter or the send button.
+
+---
+
+## Tech Stack
+
+**Framework: Electron** (JavaScript + HTML/CSS). Chosen because the UI is built in HTML/CSS/JS and ports directly into Electron with no rewrite. Electron allows always-on-top transparent windows, global mouse event hooks, screen capture, and cross-platform packaging. It is the same framework used by VS Code, Slack, Figma, and Notion.
+
+**Screen capture: screenshot-desktop** npm package. Used to capture either the full screen or a cropped region based on the lasso bounding box. Output is a base64-encoded PNG sent directly to the AI vision API.
+
+**Mouse/keyboard hooks: iohook** npm package. Provides global mouse tracking even when the Electron window is not focused, which is needed to track the lasso path across the full screen.
+
+**Local storage: electron-store** npm package. Used to store the user's API key locally on their device, encrypted. The key never leaves the device and is never sent to any server the developer controls.
+
+**HTTP client: axios** npm package for all API calls.
+
+**Voice output: say (Node.js TTS)** npm package. Uses the system's built-in text-to-speech engine — no API needed, completely free. On Mac it uses the built-in macOS voices. On Windows it uses SAPI.
+
+**Packaging and distribution: electron-builder**. Produces a .dmg file for Mac and an .exe NSIS installer for Windows. Both are uploaded to GitHub Releases for free public distribution.
+
+---
+
+## AI Vision API Setup
+
+The app ships with **OpenRouter** as the default provider. OpenRouter is a single API key that routes to 100+ models, several of which have a free tier (Gemini Flash, Llama Vision). This means the app works out of the box with zero cost for the developer during testing and for users who do not have their own API key.
+
+In the app settings (accessible via the Model button in the expanded island), the user can:
+- Choose their preferred AI provider from a dropdown: OpenRouter, Anthropic, OpenAI, Google Gemini, Groq
+- Paste their own API key into a text field
+- The key is saved locally with electron-store encryption
+
+Each provider has a different base URL and model name. These are stored as a config map in `api.js`. When a call is made, the app reads the selected provider and key from store, constructs the correct request, attaches the base64 screenshot as the image payload, and sends a prompt like: *"You are a helpful AI assistant. Explain what is shown in this image in clear, simple terms. Be concise but informative."*
+
+**Supported providers and models:**
+- OpenRouter — routes to free models like `google/gemini-flash-1.5` or `meta-llama/llama-3.2-11b-vision-instruct`
+- Anthropic — `claude-3-5-haiku-20241022` (fast and cheap) or `claude-3-5-sonnet-20241022`
+- OpenAI — `gpt-4o-mini` (cheap) or `gpt-4o`
+- Google Gemini — `gemini-1.5-flash` (very cheap, good vision)
+- Groq — `llama-3.2-11b-vision-preview` (free, extremely fast)
+- Ollama — local models like LLaVA or Moondream2 running on the user's own machine, no internet required
+
+The developer (me) will use OpenRouter with free models for testing. Users who want better quality can add their own paid key from any provider.
+
+---
+
+## Distribution — No App Store
+
+The app will NOT be submitted to the Mac App Store or Microsoft Store to avoid the $99/year Apple developer fee and the review process.
+
+**Distribution method: GitHub Releases (free)**
+
+- Build the app with electron-builder
+- Upload the .dmg (Mac) and .exe (Windows) to a GitHub Releases page on the project repo
+- Users click the download link, run the installer, and the app installs like any normal desktop app
+- GitHub hosts the files for free with no download limits
+
+**Mac-specific notes:**
+- Because the app is not notarized (requires Apple's $99 fee), macOS Gatekeeper will block it on first launch
+- Users must right-click → Open → Allow on the first launch only. After that it opens normally.
+- The app needs Screen Recording permission from macOS to capture the screen. A system permission dialog appears automatically on first use. User clicks Allow once — it never asks again.
+- This is how thousands of indie Mac apps distribute, including Obsidian, Rectangle, and many developer tools.
+
+**Windows-specific notes:**
+- Windows SmartScreen may show a "Unknown publisher" warning on first run
+- User clicks "More info → Run anyway" — one time only
+- Much less friction than Mac
+
+**Auto-updates (optional):**
+- Add electron-updater and point the update feed at GitHub Releases
+- When a new version is uploaded, users get an in-app notification to update
+- Completely free
+
+---
+
+## Key UX Decisions
+
+- The island never interrupts the user — it is small and out of the way when idle
+- Holding to expand (not just clicking) prevents accidental triggers
+- The lasso path glows in real time so the user always knows their selection path
+- The dark overlay during lasso tells the user the tool is active without being alarming
+- The typewriter animation on the AI response makes it feel alive rather than a static text dump
+- Quick-tap chips remove friction for the most common follow-up questions
+- Voice output is one toggle away — users who prefer audio over reading can use it without setup
+- The app stores keys locally only — zero server infrastructure needed from the developer

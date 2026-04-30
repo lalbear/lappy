@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/lappy-icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lappy — Your AI Companion</title>
+    <meta name="description" content="Lappy is a floating AI assistant powered by OpenRouter and Grok — ready to summarize, explain, and chat on any page." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+
+    <!-- ═══ SETUP SCREEN ════════════════════════════════════════════════════ -->
+    <div id="setup-screen" class="setup-screen hidden">
+      <div class="setup-bg-grid"></div>
+      <div class="setup-orbs">
+        <div class="setup-orb setup-orb-1"></div>
+        <div class="setup-orb setup-orb-2"></div>
+        <div class="setup-orb setup-orb-3"></div>
+      </div>
+
+      <div class="setup-container">
+        <!-- Logo -->
+        <div class="setup-logo">
+          <div class="setup-logo-icon">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="20" r="20" fill="url(#logoGrad)"/>
+              <path d="M12 20C12 15.582 15.582 12 20 12s8 3.582 8 8-3.582 8-8 8" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="20" cy="20" r="3" fill="white"/>
+              <defs>
+                <linearGradient id="logoGrad" x1="0" y1="0" x2="40" y2="40">
+                  <stop offset="0%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#3B82F6"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span class="setup-logo-text">Lappy</span>
+        </div>
+
+        <!-- Hero -->
+        <div class="setup-hero">
+          <h1 class="setup-title">Your floating<br/><span class="gradient-text">AI companion</span></h1>
+          <p class="setup-subtitle">Powered by OpenRouter & Grok — hundreds of models, free and paid, through one beautiful interface.</p>
+        </div>
+
+        <!-- Card -->
+        <div class="setup-card">
+
+          <!-- Provider selection -->
+          <div class="setup-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Choose your AI provider</h3>
+              <p>OpenRouter gives you access to 300+ models. Grok is xAI's fast, capable model.</p>
+            </div>
+          </div>
+
+          <div class="provider-grid" id="provider-grid">
+            <button class="provider-btn active" data-provider="openrouter" id="btn-openrouter">
+              <div class="provider-icon">
+                <!-- OpenRouter logo mark -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+              </div>
+              <div class="provider-info">
+                <span class="provider-name">OpenRouter</span>
+                <span class="provider-sub">300+ models · Free tier</span>
+              </div>
+              <div class="provider-check">✓</div>
+            </button>
+
+            <button class="provider-btn" data-provider="grok" id="btn-grok">
+              <div class="provider-icon">
+                <!-- xAI / Grok X mark -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </div>
+              <div class="provider-info">
+                <span class="provider-name">Grok</span>
+                <span class="provider-sub">xAI · Grok 3 & 2</span>
+              </div>
+              <div class="provider-check">✓</div>
+            </button>
+          </div>
+
+          <!-- Model selector -->
+          <div class="model-select-group">
+            <label class="api-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+              Model
+            </label>
+            <select id="model-select" class="model-select"></select>
+          </div>
+
+          <!-- Divider -->
+          <div class="setup-divider">
+            <span>— your API key —</span>
+          </div>
+
+          <!-- Step 2: API Key -->
+          <div class="setup-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Add your API key</h3>
+              <p>Get one free at <a href="https://openrouter.ai/keys" target="_blank" class="setup-link">openrouter.ai/keys</a> or <a href="https://console.x.ai/" target="_blank" class="setup-link">x.ai</a></p>
+            </div>
+          </div>
+
+          <div id="key-section" class="api-input-group">
+            <div class="api-input-wrapper">
+              <input
+                type="password"
+                id="api-key-input"
+                class="api-input"
+                placeholder="sk-or-v1-..."
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <button class="api-toggle-btn" id="api-toggle-btn" title="Show/hide key">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <p class="api-hint">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Stored in your browser only. Never sent to our servers.
+            </p>
+          </div>
+
+          <!-- Launch with key -->
+          <button class="setup-cta" id="setup-cta" disabled>
+            <span class="cta-text">Launch Lappy</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+
+          <!-- OR divider -->
+          <div class="setup-or">
+            <span>or</span>
+          </div>
+
+          <!-- Free mode CTA -->
+          <button class="setup-free-btn" id="free-mode-btn">
+            <div class="free-btn-sparkle">✨</div>
+            <div class="free-btn-text">
+              <span class="free-btn-title">Try for free — no key needed</span>
+              <span class="free-btn-sub">Uses OpenRouter free models · Limited to free tier</span>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+
+          <p id="free-mode-note" class="setup-note">
+            Free models include Llama 3.1, Gemma 3, Mistral 7B, DeepSeek R1 & more.
+          </p>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- ═══ FLOATING TRIGGER (Dynamic Island) ════════════════════════════════ -->
+    <div id="lappy-trigger" class="lappy-trigger hidden" title="Hold for actions">
+      <div class="island-content">
+        <!-- Close app icon -->
+        <button id="lappy-close" class="lappy-close" title="Close App">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+
+        <div class="trigger-icon-island" id="island-indicator">
+          <!-- Mini glowing indicator -->
+          <div class="island-glow"></div>
+        </div>
+
+        <!-- Tool icons inside the island -->
+        <div id="island-tools" class="island-tools">
+          <button class="action-item" data-action="lasso" id="action-lasso" title="Lasso Select">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 14c0 3.3 2.7 6 6 6s6-2.7 6-6c0-4-6-12-6-12S4 10 4 14z"/><path d="M17 9c1.7.8 3 2.5 3 4.5 0 2.8-2.2 5-5 5"/></svg>
+          </button>
+          <button class="action-item" data-action="screenshot" id="action-screenshot" title="Screenshot">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M3 9h2M3 15h2M19 9h2M19 15h2M9 3v2M15 3v2M9 19v2M15 19v2"/></svg>
+          </button>
+          <button class="action-item" data-action="chat" id="action-chat" title="Chat">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <button class="action-item" data-action="settings" id="action-settings" title="Settings">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        </div>
+
+        <div id="island-input-container" class="island-input-container hidden">
+          <input type="text" id="island-quick-input" placeholder="Ask a question..." autocomplete="off"/>
+          <button id="island-send-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SIDEBAR ══════════════════════════════════════════════════════════ -->
+    <div id="lappy-sidebar" class="lappy-sidebar hidden">
+      <div class="sidebar-drag-handle" id="sidebar-drag-handle">
+        <div class="drag-dots">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg width="18" height="18" viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="20" r="20" fill="url(#sbGrad)"/>
+              <path d="M12 20C12 15.582 15.582 12 20 12s8 3.582 8 8-3.582 8-8 8" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="20" cy="20" r="3" fill="white"/>
+              <defs>
+                <linearGradient id="sbGrad" x1="0" y1="0" x2="40" y2="40">
+                  <stop offset="0%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#3B82F6"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span class="sidebar-brand-name">Lappy</span>
+          <div class="sidebar-status-dot"></div>
+          <span class="free-badge" id="free-badge">FREE</span>
+        </div>
+        <div class="sidebar-controls">
+          <button class="sidebar-ctrl-btn" id="sidebar-minimize" title="Minimize">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <button class="sidebar-ctrl-btn" id="sidebar-close" title="Close">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="sidebar-context-bar hidden" id="sidebar-context-bar">
+        <div class="context-pill" id="context-pill">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h10"/></svg>
+          <span id="context-label">Summarizing page...</span>
+        </div>
+      </div>
+
+      <div class="sidebar-messages" id="sidebar-messages">
+        <div class="message-group lappy-message">
+          <div class="message-avatar">L</div>
+          <div class="message-bubble">
+            <p>Hey! I'm Lappy 👋 Running on <strong>Gemma 4 26B</strong> (Google's latest, free) with <strong>Nemotron 12B VL</strong> on standby as fallback.</p>
+            <p><strong>Hold the trigger</strong> (top-right) for quick AI actions, or ask me anything below.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-typing" id="sidebar-typing">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+
+      <!-- Image preview strip (shown when image is attached) -->
+      <div id="image-preview-bar" class="image-preview-bar hidden">
+        <img id="image-preview" class="image-preview-thumb" src="" alt="Attached image"/>
+        <div class="image-preview-label">
+          <span>Image attached</span>
+          <small>Ask a question below ↓</small>
+        </div>
+        <button id="image-clear-btn" class="image-clear-btn" title="Remove image">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-input-row">
+          <textarea id="sidebar-input" class="sidebar-input" placeholder="Ask Lappy anything..." rows="1"></textarea>
+          <button class="sidebar-send-btn" id="sidebar-send-btn" title="Send">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+        <div class="sidebar-footer-hint">
+          <span id="current-model-label">Gemma 4 26B</span>
+          via OpenRouter
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SETTINGS MODAL ═══════════════════════════════════════════════════ -->
+    <div id="settings-modal" class="settings-modal hidden">
+      <div class="settings-backdrop" id="settings-backdrop"></div>
+      <div class="settings-panel">
+        <div class="settings-header">
+          <h3>Lappy Settings</h3>
+          <button class="settings-close-btn" id="settings-close-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">Provider</label>
+          <div class="provider-grid" id="settings-provider-grid">
+            <button class="provider-btn active" data-provider="openrouter">
+              <div class="provider-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></div>
+              <div class="provider-info"><span class="provider-name">OpenRouter</span><span class="provider-sub">Free + paid</span></div>
+              <div class="provider-check">✓</div>
+            </button>
+            <button class="provider-btn" data-provider="grok">
+              <div class="provider-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div>
+              <div class="provider-info"><span class="provider-name">Grok</span><span class="provider-sub">xAI · paid</span></div>
+              <div class="provider-check">✓</div>
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">Model</label>
+          <select id="settings-model" class="model-select"></select>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">API Key</label>
+          <div class="api-input-wrapper">
+            <input type="password" id="settings-api-key" class="api-input" placeholder="sk-or-v1-... or xai-..."/>
+            <button class="api-toggle-btn" id="settings-toggle-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-actions">
+          <button class="settings-reset-btn" id="settings-reset-btn">Reset All</button>
+          <button class="settings-save-btn" id="settings-save-btn">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
